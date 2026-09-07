@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="UttamOS">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>UttamOS — Japan Mode V2</title>
+<style>
+:root{
+ --bg:#080b14;--panel:#111729;--panel2:#151d32;--text:#eef2ff;--muted:#929bb5;
+ --accent:#7c5cff;--accent2:#22d3ee;--good:#34d399;--warn:#fbbf24;--danger:#fb7185;
+ --line:#252e47;--shadow:0 18px 50px #0007;--radius:20px
+}
+*{box-sizing:border-box}
+html,body{min-height:100%;margin:0}
+body{
+ background:radial-gradient(circle at 80% -10%,#33206c 0,#11152b 30%,var(--bg) 62%);
+ background-attachment:fixed;color:var(--text);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif
+}
+body.wallpaper{
+ background-image:linear-gradient(#0008,#0008),var(--wallpaper);
+ background-size:cover;background-position:center;background-attachment:fixed
+}
+button,input,select{font:inherit}button{border:0;cursor:pointer;color:var(--text)}
+.app{max-width:1180px;margin:auto;padding:20px}
+header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:18px}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:24px;box-shadow:0 10px 30px #7c5cff44}
+.brand h1{font-size:21px;margin:0}.brand small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:1.45fr .85fr;gap:16px}
+.card{background:#101626cc;border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);backdrop-filter:blur(14px)}
+.hero{padding:24px;background:linear-gradient(135deg,#171d38,#101626 60%,#12263a)}
+.eyebrow{color:var(--accent2);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+.hero h2{font-size:31px;line-height:1.1;margin:8px 0}.quote{color:#bac3dc;max-width:720px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:20px}
+.stat{background:#0b1020aa;border:1px solid var(--line);padding:13px;border-radius:14px}.stat b{display:block;font-size:22px}.stat span{color:var(--muted);font-size:12px}
+.progress{height:9px;background:#252c41;border-radius:99px;overflow:hidden}.bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;transition:.35s}
+.sectionhead{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px}.sectionhead h3{margin:0;font-size:18px}
+.btn{background:var(--accent);padding:10px 14px;border-radius:12px;font-weight:800}.btn.secondary{background:#202943}.btn.good{background:#146b52}.btn.danger{background:#522133}.btn.gold{background:#715d13}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.task{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.task:last-child{border-bottom:0}
+.check{width:23px;height:23px;border-radius:7px;background:#202943;border:1px solid #3b4764;display:grid;place-items:center;flex:none}.check.done{background:var(--good);color:#06120e;border-color:var(--good)}
+.taskmain{flex:1}.taskmain b{display:block}.task.done .taskmain b{text-decoration:line-through;color:#7f899f}.task small{color:var(--muted)}
+.pill{padding:4px 8px;border-radius:999px;background:#202943;color:#bfc9e2;font-size:11px}.xp{color:#f8d66d;font-weight:800}
+.reward{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:15px;margin:9px 0;background:#0d1322}.reward h4{margin:0 0 4px}.reward small{color:var(--muted)}.reward button:disabled{opacity:.4;cursor:not-allowed}
+.timer{text-align:center}.time{font-size:56px;font-variant-numeric:tabular-nums;font-weight:800;margin:10px 0}.mode{color:var(--muted)}
+.timerbar{height:8px;margin:12px 0 17px}
+input,select{width:100%;background:#0b1020;border:1px solid var(--line);color:var(--text);padding:11px;border-radius:11px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}input[type=file]{padding:8px}
+.form{display:grid;grid-template-columns:1fr 120px 120px;gap:8px;margin-bottom:10px}
+.empty{color:var(--muted);padding:18px 0;text-align:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#171e33;border:1px solid #3a4768;padding:15px 20px;border-radius:15px;box-shadow:var(--shadow);z-index:20;transition:.3s;max-width:90%;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}.toast strong{display:block;font-size:17px}.motivation{font-size:18px;line-height:1.45}
+.achievement{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.achievement:last-child{border:0}.emoji{font-size:26px}
+.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.theme{border:1px solid var(--line);border-radius:15px;padding:12px;background:#0d1322}.theme b{display:block}.theme small{display:block;color:var(--muted);margin:4px 0 9px}.theme.active{outline:2px solid var(--accent)}
+.swatches{display:flex;gap:5px;margin-bottom:10px}.sw{width:18px;height:18px;border-radius:50%;border:1px solid #fff3}
+.settings-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.music-status{color:var(--muted);font-size:12px;margin-top:8px;word-break:break-word}
+.lock{opacity:.65}
+footer{text-align:center;color:#68738f;padding:25px;font-size:12px}
+body.neon{
+ --bg:#050509;--panel:#080b12;--panel2:#0b1018;--text:#e9ffff;--muted:#75a5a5;--accent:#00f5d4;--accent2:#ff2bd6;--line:#00f5d444;
+ --shadow:0 0 22px #00f5d422,0 18px 50px #0009
+}
+body.neon .card,body.neon .reward,body.neon .theme{border-color:#00f5d444;box-shadow:0 0 15px #00f5d414, var(--shadow)}
+body.neon .hero{background:linear-gradient(135deg,#08151a,#090b12 60%,#160914)}
+body.neon .btn{box-shadow:0 0 12px #00f5d433}
+body.neon .brand h1,body.neon .sectionhead h3{letter-spacing:.05em}
+body.sakura{--bg:#170b15;--accent:#ff6fae;--accent2:#ffc0df;--line:#61334e;background:radial-gradient(circle at 80% -10%,#5b1f4e 0,#281126 34%,var(--bg) 65%)}
+body.midnight{--bg:#050914;--accent:#60a5fa;--accent2:#a78bfa;--line:#263650;background:radial-gradient(circle at 80% -10%,#172d62 0,#0c1529 35%,var(--bg) 65%)}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.form,.settings-row{grid-template-columns:1fr}.hero h2{font-size:26px}.app{padding:13px}.theme-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">🇯🇵</div><div><h1>UttamOS</h1><small>Japan Mode • V2 productivity RPG</small></div></div>
+ <div class="row"><button class="btn secondary" onclick="openSettings()">⚙️ Customize</button><button class="btn danger" onclick="resetAll()">Reset</button></div>
+</header>
+
+<section class="card hero">
+ <div class="eyebrow">Mission: Japan 🇯🇵</div>
+ <h2 id="greeting">Let's get to work.</h2>
+ <div class="quote" id="quote"></div>
+ <div style="margin-top:18px">
+  <div class="row" style="justify-content:space-between"><b id="level">Level 1</b><span id="xpText">0 / 500 XP</span></div>
+  <div class="progress"><div class="bar" id="xpBar"></div></div>
+  <div id="nextReward" style="margin-top:7px;color:var(--muted);font-size:12px"></div>
+ </div>
+ <div class="stats">
+  <div class="stat"><b id="todayXP">0</b><span>XP today</span></div>
+  <div class="stat"><b id="doneCount">0</b><span>Tasks done</span></div>
+  <div class="stat"><b id="streak">0</b><span>Day streak</span></div>
+  <div class="stat"><b id="cad">0m</b><span>CAD logged</span></div>
+ </div>
+</section>
+
+<div class="grid">
+<main>
+ <div class="sectionhead"><h3>Today's quests</h3></div>
+ <div class="card">
+  <div class="form"><input id="taskInput" placeholder="Add a task…"><input id="taskXP" type="number" min="1" value="50" placeholder="XP"><button class="btn" onclick="addTask()">Add</button></div>
+  <div id="tasks"></div>
+ </div>
+
+ <div class="sectionhead"><h3>🎁 Reward shop</h3><button class="btn secondary" onclick="addReward()">+ Reward</button></div>
+ <div class="card" id="rewards"></div>
+
+ <div class="sectionhead"><h3>🏆 Achievements</h3></div>
+ <div class="card" id="achievements"></div>
+</main>
+
+<aside>
+ <div class="sectionhead"><h3>⏱️ Focus</h3></div>
+ <div class="card timer">
+  <div class="mode" id="timerMode">Study session</div>
+  <div class="time" id="time">25:00</div>
+  <div class="progress timerbar"><div class="bar" id="timerBar" style="width:100%"></div></div>
+  <div class="row" style="justify-content:center"><button class="btn" onclick="toggleTimer()" id="timerBtn">Start</button><button class="btn secondary" onclick="resetTimer()">Reset</button></div>
+  <div style="margin-top:12px"><button class="btn secondary" onclick="setTimer(25)">25m</button> <button class="btn secondary" onclick="setTimer(50)">50m</button> <button class="btn secondary" onclick="setTimer(60)">60m</button></div>
+  <div style="margin-top:12px">
+   <select id="focusType" onchange="updateFocusMode()"><option value="study">📚 Study</option><option value="cad">📐 CAD</option><option value="japanese">🇯🇵 Japanese</option><option value="creative">🛠️ Creative</option></select>
+  </div>
+ </div>
+
+ <div class="sectionhead"><h3>🔥 Motivation</h3></div>
+ <div class="card motivation" id="motivation"></div>
+
+ <div class="sectionhead"><h3>🎨 Themes & Wallpaper</h3></div>
+ <div class="card">
+  <div class="theme-grid" id="themes"></div>
+  <div style="margin-top:12px"><label class="pill">Custom wallpaper</label><input id="wallpaperInput" type="file" accept="image/*" onchange="setWallpaper(event)"></div>
+  <div class="row" style="margin-top:9px"><button class="btn secondary" onclick="clearWallpaper()">Remove wallpaper</button></div>
+ </div>
+
+ <div class="sectionhead"><h3>🎵 Audio</h3></div>
+ <div class="card">
+  <div class="row">
+   <button class="btn secondary" onclick="beep()">🔊 Test sound</button>
+   <button class="btn secondary" onclick="toggleMusic()" id="musicBtn">▶ Music</button>
+  </div>
+  <div style="margin-top:10px"><input id="musicInput" type="file" accept="audio/*" onchange="loadMusic(event)"></div>
+  <div class="music-status" id="musicStatus">Choose an audio file from your device. The browser will play it after you start it.</div>
+  <audio id="music" loop></audio>
+ </div>
+
+ <div class="sectionhead"><h3>📌 Quick rules</h3></div>
+ <div class="card" style="color:#aeb8d0;line-height:1.7">
+ • XP is earned by completing quests or focus sessions.<br>
+ • Rewards cost XP and can reduce your level if you spend below a level threshold.<br>
+ • Levels use increasing milestones: 500 → 1,000 → 2,000 → 4,000…<br>
+ • CAD focus sessions log CAD minutes automatically.<br>
+ • Themes can be unlocked with XP or level milestones.<br>
+ • Wallpaper stays on this device/browser when storage allows.<br>
+ • Random motivational notifications work best while UttamOS is open.
+ </div>
+</aside>
+</div>
+<footer>UttamOS V2 • Built for the mission, not the vibes. 🇯🇵</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY="uttamos_v2";
+const defaults={
+ tasks:[], rewards:[
+  {id:1,name:"30 min CAD",cost:100,desc:"A focused CAD session."},
+  {id:2,name:"1 hour CAD",cost:200,desc:"Build something cool."},
+  {id:3,name:"30 min chill",cost:120,desc:"Guilt-free break."},
+  {id:4,name:"1 anime episode",cost:150,desc:"Earned entertainment."},
+  {id:5,name:"30 min gaming",cost:100,desc:"Game time, no guilt."}
+ ],xp:0,totalDone:0,cad:0,streak:0,lastDay:"",todayXP:0,day:"",achievements:[],
+ theme:"default",wallpaper:"",levelRewardsClaimed:[],musicData:"",musicName:"",redeemed:0
+};
+let old=JSON.parse(localStorage.getItem("uttamos_v1")||"null");
+let state=JSON.parse(localStorage.getItem(KEY)||"null")||migrateOld(old)||structuredClone(defaults);
+
+function migrateOld(s){
+ if(!s)return null;
+ let n=structuredClone(defaults);
+ n.tasks=s.tasks||[];n.rewards=s.rewards||n.rewards;n.xp=s.xp||0;n.totalDone=s.totalDone||0;n.cad=s.cad||0;
+ n.streak=s.streak||0;n.lastDay=s.lastDay||"";n.todayXP=s.todayXP||0;n.day=s.day||"";n.achievements=s.achievements||[];
+ return n;
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(state))}
+function dayKey(){return new Date().toISOString().slice(0,10)}
+function initDay(){
+ let d=dayKey();
+ if(state.day!==d){
+  let y=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  state.streak=state.lastDay===y?state.streak+1:1;state.lastDay=state.day;state.day=d;state.todayXP=0;save();
+ }
+}
+initDay();
+
+const quotes=[
+"Dreaming about Japan is free. Getting there takes work.",
+"Future Uttam is depending on today's Uttam.",
+"One more problem. One more kanji. One more hour.",
+"Consistency beats the heroic study session you keep waiting for.",
+"You don't need motivation. You need the next 25 minutes.",
+"Make the version of yourself who gets to Japan inevitable.",
+"Your XP doesn't care about excuses. It only cares what you actually did."
+];
+const randomMsgs=[
+["📡 MISSION CHECK","Are you studying right now? 🇯🇵"],
+["🇯🇵 REMINDER","We gotta get to Japan. Back to work."],
+["⚙️ ENGINEER ALERT","Go make something. Then go solve something."],
+["📚 QUEST SYSTEM","There is probably a problem set waiting for you. 💀"],
+["🚀 FUTURE UTTAM","Keep stacking small wins."],
+["🧠 BRAIN ONLINE?","25 minutes. No drama. Just start."],
+["🔥 JAPAN MODE","You don't need a perfect day. You need the next task."]
+];
+
+function thresholds(){return [0,500,1000,2000,4000,7000,11000,16000,22000,30000,40000,52000,68000,88000,112000,140000,175000,215000,260000,310000]}
+function levelInfo(){
+ let th=thresholds(),lv=1;
+ for(let i=1;i<th.length;i++){if(state.xp>=th[i])lv=i+1;else break}
+ let current=th[lv-1],next=th[lv]??Math.ceil((current+1)*1.35);
+ return {lv,current,next,into:state.xp-current,need:next-current}
+}
+function render(){
+ initDay();
+ let L=levelInfo();
+ document.getElementById("level").textContent="Level "+L.lv;
+ document.getElementById("xpText").textContent=`${state.xp.toLocaleString()} / ${L.next.toLocaleString()} XP`;
+ document.getElementById("xpBar").style.width=Math.min(100,(L.into/L.need)*100)+"%";
+ document.getElementById("nextReward").textContent=levelRewardText(L.lv,L.next);
+ document.getElementById("todayXP").textContent=state.todayXP;
+ document.getElementById("doneCount").textContent=state.totalDone;
+ document.getElementById("streak").textContent=state.streak;
+ document.getElementById("cad").textContent=state.cad+"m";
+ document.getElementById("greeting").textContent=L.lv>=10?"JAPAN MODE: FULL SEND 🇯🇵":L.lv>=5?"Keep pushing. You're building momentum.":"Let's get to work.";
+ renderTasks();renderRewards();renderAchievements();renderThemes();applyTheme();
+}
+function addTask(){
+ let n=document.getElementById("taskInput").value.trim(),x=Math.max(1,+document.getElementById("taskXP").value||50);
+ if(!n)return;state.tasks.push({id:Date.now(),name:n,xp:x,done:false});document.getElementById("taskInput").value="";save();render();
+}
+function renderTasks(){
+ let el=document.getElementById("tasks");el.innerHTML="";
+ if(!state.tasks.length){el.innerHTML='<div class="empty">No quests yet. Add one and go cook. 🔥</div>';return}
+ state.tasks.slice().reverse().forEach(t=>{
+  let d=document.createElement("div");d.className="task "+(t.done?"done":"");
+  d.innerHTML=`<button class="check ${t.done?"done":""}" onclick="toggleTask(${t.id})">${t.done?"✓":""}</button><div class="taskmain"><b>${esc(t.name)}</b><small>${t.done?"Completed":"Quest"} • <span class="xp">+${t.xp} XP</span></small></div><button class="btn danger" style="padding:7px 9px" onclick="deleteTask(${t.id})">×</button>`;
+  el.appendChild(d);
+ });
+}
+function addXP(x){
+ state.xp=Math.max(0,state.xp+x);state.todayXP=Math.max(0,state.todayXP+x);
+}
+function toggleTask(id){
+ let t=state.tasks.find(x=>x.id===id);if(!t)return;
+ if(!t.done){t.done=true;addXP(t.xp);state.totalDone++;toast("WELL DONE UTTAM!","That's my boy. 😤 🇯🇵 LET'S GO JAPANNNN!");checkAchievements();checkLevelUp()}
+ else{t.done=false;state.xp=Math.max(0,state.xp-t.xp);state.todayXP=Math.max(0,state.todayXP-t.xp);state.totalDone=Math.max(0,state.totalDone-1)}
+ save();render();
+}
+function deleteTask(id){state.tasks=state.tasks.filter(t=>t.id!==id);save();render()}
+function addReward(){
+ let n=prompt("Reward name (e.g. 30 minute CAD):");if(!n)return;
+ let c=+prompt("XP cost:",100);if(!c||c<1)return;
+ state.rewards.push({id:Date.now(),name:n,cost:c,desc:"Your custom reward."});save();render();
+}
+function renderRewards(){
+ let el=document.getElementById("rewards");el.innerHTML="";
+ state.rewards.forEach(r=>{
+  let d=document.createElement("div");d.className="reward";
+  d.innerHTML=`<div><h4>${esc(r.name)}</h4><small>${esc(r.desc)}</small></div><div class="row"><span class="xp">${r.cost} XP</span><button class="btn good" ${state.xp<r.cost?"disabled":""} onclick="redeem(${r.id})">Redeem</button></div>`;
+  el.appendChild(d);
+ });
+}
+function redeem(id){
+ let r=state.rewards.find(x=>x.id===id);if(!r||state.xp<r.cost)return;
+ state.xp-=r.cost;state.redeemed=(state.redeemed||0)+1;save();render();toast("🎁 REWARD UNLOCKED",`${esc(r.name)}<br><b>Enjoy it. You earned it.</b>`);
+}
+const ach=[
+ ["🌱","First Step","Complete your first quest",s=>s.totalDone>=1],
+ ["🔥","Getting Serious","Reach 500 XP",s=>s.xp>=500],
+ ["📚","Workhorse","Complete 10 quests",s=>s.totalDone>=10],
+ ["📐","Engineer","Log 60 minutes of CAD",s=>s.cad>=60],
+ ["🇯🇵","Japan Mode","Reach Level 5",s=>levelInfo().lv>=5],
+ ["🚀","No Excuses","Complete 25 quests",s=>s.totalDone>=25],
+ ["🎮","Side Quest","Redeem your first reward",s=>s.redeemed>=1],
+ ["🏆","Boss Fight","Reach Level 10",s=>levelInfo().lv>=10]
+];
+function checkAchievements(){ach.forEach((a,i)=>{if(a[3](state)&&!state.achievements.includes(i)){state.achievements.push(i);setTimeout(()=>toast("🏆 ACHIEVEMENT",a[1]),250)}})}
+function renderAchievements(){
+ let el=document.getElementById("achievements");
+ el.innerHTML=ach.map((a,i)=>`<div class="achievement" style="opacity:${state.achievements.includes(i)?1:.4}"><div class="emoji">${a[0]}</div><div><b>${a[1]}</b><br><small>${a[2]}</small></div></div>`).join("");
+}
+function checkLevelUp(){
+ let oldLv=levelInfo().lv;
+ setTimeout(()=>{
+  let now=levelInfo().lv;
+  if(now>oldLv){toast("⬆️ LEVEL UP!",`Level ${now}! ${levelRewardText(now,levelInfo().next)}`);beep("level")}
+  checkAchievements();
+ },30);
+}
+function levelRewardText(lv,next){
+ const r=LEVEL_REWARDS.find(x=>x.level===lv+1);
+ return r?`Next: Level ${lv+1} — ${r.name}`:`Next level at ${next.toLocaleString()} XP`;
+}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function toast(title,msg){let t=document.getElementById("toast");t.innerHTML=`<strong>${title}</strong>${msg}`;t.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove("show"),3600)}
+function resetAll(){if(confirm("Reset ALL UttamOS V2 data?")){localStorage.removeItem(KEY);localStorage.removeItem("uttamos_v1");location.reload()}}
+
+let timer=1500,total=1500,running=false,interval=null;
+function setTimer(min){timer=total=min*60;running=false;clearInterval(interval);document.getElementById("timerBtn").textContent="Start";updateTimer()}
+function resetTimer(){setTimer(total/60)}
+function updateFocusMode(){
+ const labels={study:"Study session",cad:"CAD session",japanese:"Japanese session",creative:"Creative session"};
+ document.getElementById("timerMode").textContent=labels[document.getElementById("focusType").value]||"Focus session";
+}
+function toggleTimer(){
+ if(running){running=false;clearInterval(interval);document.getElementById("timerBtn").textContent="Resume";return}
+ running=true;document.getElementById("timerBtn").textContent="Pause";
+ interval=setInterval(()=>{
+  timer--;updateTimer();
+  if(timer<=0){
+   clearInterval(interval);running=false;document.getElementById("timerBtn").textContent="Start";
+   let mins=Math.round(total/60),type=document.getElementById("focusType").value;
+   if(type==="cad")state.cad+=mins;
+   addXP(mins);
+   save();render();
+   toast("🔥 FOCUS COMPLETE",`+${mins} XP<br>${type==="cad"?`+${mins}m CAD logged • `:""}That's my boy. KEEP GOING 🇯🇵`);
+   notify("Focus complete","Well done Uttam — session complete!");
+   beep("complete");checkLevelUp();
+  }
+ },1000)
+}
+function updateTimer(){let m=Math.floor(timer/60),s=timer%60;document.getElementById("time").textContent=`${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;document.getElementById("timerBar").style.width=(timer/total*100)+"%"}
+function notify(title,body){if("Notification"in window&&Notification.permission==="granted")new Notification(title,{body})}
+if("Notification"in window&&Notification.permission==="default"){setTimeout(()=>Notification.requestPermission().catch(()=>{}),1800)}
+
+const LEVEL_REWARDS=[
+ {level:2,name:"Unlock Sakura theme",kind:"theme",id:"sakura"},
+ {level:3,name:"Unlock Midnight theme",kind:"theme",id:"midnight"},
+ {level:4,name:"Unlock Neon Pixel theme",kind:"theme",id:"neon"},
+ {level:5,name:"Japan Mode badge",kind:"badge"},
+ {level:7,name:"Neon HUD upgrade",kind:"badge"},
+ {level:10,name:"Boss Fight badge",kind:"badge"}
+];
+const THEMES=[
+ {id:"default",name:"Classic Japan",cost:0,desc:"The original UttamOS look.",sw:["#7c5cff","#22d3ee"]},
+ {id:"sakura",name:"Sakura",cost:1000,desc:"Soft pink Japan-night vibe.",sw:["#ff6fae","#ffc0df"]},
+ {id:"midnight",name:"Midnight",cost:1800,desc:"Deep blue aerospace-night vibe.",sw:["#60a5fa","#a78bfa"]},
+ {id:"neon",name:"NEON PIXEL",cost:3000,desc:"CRT glow. Pixel RPG energy.",sw:["#00f5d4","#ff2bd6"]}
+];
+function themeUnlocked(id){
+ if(id==="default")return true;
+ let t=THEMES.find(x=>x.id===id);
+ return state.xp>=t.cost || levelInfo().lv>=(id==="neon"?4:id==="midnight"?3:2);
+}
+function renderThemes(){
+ let el=document.getElementById("themes");
+ el.innerHTML=THEMES.map(t=>{
+  let unlocked=themeUnlocked(t.id),active=state.theme===t.id;
+  return `<div class="theme ${active?"active":""} ${unlocked?"":"lock"}">
+   <div class="swatches">${t.sw.map(c=>`<span class="sw" style="background:${c}"></span>`).join("")}</div>
+   <b>${t.name}</b><small>${t.desc}</small>
+   ${unlocked?`<button class="btn ${active?"gold":"secondary"}" onclick="useTheme('${t.id}')">${active?"Active":"Use"}</button>`:`<button class="btn secondary" onclick="buyTheme('${t.id}')">${t.cost.toLocaleString()} XP</button>`}
+  </div>`;
+ }).join("");
+}
+function buyTheme(id){
+ let t=THEMES.find(x=>x.id===id);if(!t||themeUnlocked(id))return;
+ if(state.xp<t.cost){toast("🔒 LOCKED",`Need ${t.cost-state.xp} more XP.`);return}
+ state.xp-=t.cost;state.theme=id;save();render();toast("🎨 THEME UNLOCKED",`${t.name} is yours.`);
+}
+function useTheme(id){if(!themeUnlocked(id))return;state.theme=id;save();applyTheme();renderThemes();toast("🎨 THEME EQUIPPED",THEMES.find(x=>x.id===id).name)}
+function applyTheme(){
+ document.body.classList.remove("neon","sakura","midnight");
+ if(state.theme!=="default")document.body.classList.add(state.theme);
+ if(state.wallpaper){document.body.classList.add("wallpaper");document.body.style.setProperty("--wallpaper",`url("${state.wallpaper}")`)}
+ else{document.body.classList.remove("wallpaper");document.body.style.removeProperty("--wallpaper")}
+}
+function setWallpaper(e){
+ const f=e.target.files[0];if(!f)return;
+ if(!f.type.startsWith("image/"))return;
+ const reader=new FileReader();
+ reader.onload=()=>{compressImage(reader.result,1200,.78).then(data=>{state.wallpaper=data;save();applyTheme();toast("🖼️ WALLPAPER SET","Your background is now part of UttamOS.");})};
+ reader.readAsDataURL(f);
+}
+function compressImage(data,max,quality){
+ return new Promise(resolve=>{
+  let img=new Image();img.onload=()=>{
+   let scale=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement("canvas");
+   c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));
+   c.getContext("2d").drawImage(img,0,0,c.width,c.height);resolve(c.toDataURL("image/jpeg",quality));
+  };img.src=data;
+ });
+}
+function clearWallpaper(){state.wallpaper="";save();applyTheme();document.getElementById("wallpaperInput").value="";toast("🖼️ WALLPAPER REMOVED","Back to the theme background.")}
+function openSettings(){document.getElementById("wallpaperInput").scrollIntoView({behavior:"smooth",block:"center"});toast("⚙️ CUSTOMIZE","Theme, wallpaper and audio controls are in the right panel.")}
+
+let audioCtx=null;
+function beep(kind="click"){
+ try{
+  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended")audioCtx.resume();
+  let o=audioCtx.createOscillator(),g=audioCtx.createGain(),now=audioCtx.currentTime;
+  let freq=kind==="level"?660:kind==="complete"?520:kind==="reward"?740:440;
+  o.type="sine";o.frequency.setValueAtTime(freq,now);o.frequency.exponentialRampToValueAtTime(freq*1.35,now+.16);
+  g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.08,now+.02);g.gain.exponentialRampToValueAtTime(.0001,now+.22);
+  o.connect(g).connect(audioCtx.destination);o.start(now);o.stop(now+.23);
+ }catch(e){}
+}
+let musicURL=null;
+function loadMusic(e){
+ const f=e.target.files[0];if(!f)return;
+ if(musicURL)URL.revokeObjectURL(musicURL);
+ musicURL=URL.createObjectURL(f);
+ const a=document.getElementById("music");a.src=musicURL;state.musicName=f.name;save();
+ document.getElementById("musicStatus").textContent=`Loaded: ${f.name} • press Music to play.`;
+}
+function toggleMusic(){
+ const a=document.getElementById("music"),b=document.getElementById("musicBtn");
+ if(!a.src){toast("🎵 NO MUSIC","Choose an audio file first.");return}
+ if(a.paused){a.play().then(()=>b.textContent="⏸ Music").catch(()=>toast("🎵 TAP TO PLAY","Your browser blocked autoplay. Tap Music again."))}
+ else{a.pause();b.textContent="▶ Music"}
+}
+
+let randomTimer=null;
+function scheduleRandomNotification(){
+ clearTimeout(randomTimer);
+ const delay=2*60*1000+Math.random()*5*60*1000;
+ randomTimer=setTimeout(()=>{
+  const m=randomMsgs[Math.floor(Math.random()*randomMsgs.length)];
+  toast(m[0],m[1]);
+  notify(m[0],m[1]);
+  scheduleRandomNotification();
+ },delay);
+}
+function levelRewardCheck(){
+ const L=levelInfo().lv;
+ LEVEL_REWARDS.filter(x=>x.level<=L).forEach(r=>{
+  if(!state.levelRewardsClaimed.includes(r.level)){state.levelRewardsClaimed.push(r.level);setTimeout(()=>toast("🎁 LEVEL REWARD",`Level ${r.level}: ${r.name}`),500)}
+ });
+ save();
+}
+render();levelRewardCheck();scheduleRandomNotification();
+if(state.musicName)document.getElementById("musicStatus").textContent=`Previously selected: ${state.musicName} • choose the file again after a reload to play it.`;
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+ window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
