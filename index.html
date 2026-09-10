@@ -526,41 +526,48 @@ const LEVEL_REWARDS=[
  {level:7,name:"Neon HUD upgrade",kind:"badge"},
  {level:10,name:"Boss Fight badge",kind:"badge"}
 ];
+
 const THEMES=[
- {id:"default",name:"Classic Japan",cost:0,desc:"Clean Japan-inspired look. Custom wallpaper lives here.",sw:["#7c5cff","#22d3ee"]},
- {id:"sakura",name:"Sakura",cost:1000,desc:"Animated petals • soft pink Japan-night.",sw:["#ff6fae","#ffc0df"]},
- {id:"midnight",name:"Midnight",cost:1800,desc:"Animated stars • meteors • deep aerospace night.",sw:["#60a5fa","#a78bfa"]},
- {id:"neon",name:"NEON PIXEL",cost:3000,desc:"Pixel/CRT vibe • glow • glitch effects.",sw:["#00f5d4","#ff2bd6"]},
- {id:"winter",name:"WINTER ARC",cost:999999999,level:5,desc:"Level 5 exclusive • animated snowfall.",sw:["#b9d7ea","#eef7ff"]}
+ {id:"default",name:"Classic Japan",level:1,desc:"Clean Japan-inspired look. Custom wallpaper lives here.",sw:["#7c5cff","#22d3ee"]},
+ {id:"sakura",name:"Sakura",level:2,desc:"Animated petals • soft pink Japan-night.",sw:["#ff6fae","#ffc0df"]},
+ {id:"midnight",name:"Midnight",level:3,desc:"Animated stars • meteors • deep aerospace night.",sw:["#60a5fa","#a78bfa"]},
+ {id:"neon",name:"NEON PIXEL",level:4,desc:"Pixel/CRT vibe • glow • glitch effects.",sw:["#00f5d4","#ff2bd6"]},
+ {id:"winter",name:"WINTER ARC",level:5,desc:"Level 5 exclusive • animated snowfall.",sw:["#b9d7ea","#eef7ff"]}
 ];
-function themeUnlocked(id){
- if(id==="default")return true;
- let t=THEMES.find(x=>x.id===id);if(!t)return false;
- if(t.level)return levelInfo().lv>=t.level;
- return state.xp>=t.cost || levelInfo().lv>=(id==="neon"?4:id==="midnight"?3:id==="sakura"?2:999);
-}
+
 function themeUnlocked(id){
  if(id==="default")return true;
  let t=THEMES.find(x=>x.id===id);
- return state.xp>=t.cost || levelInfo().lv>=(id==="neon"?4:id==="midnight"?3:2);
+ if(!t)return false;
+ return levelInfo().lv>=t.level;
 }
+
 function renderThemes(){
  let el=document.getElementById("themes");
  el.innerHTML=THEMES.map(t=>{
   let unlocked=themeUnlocked(t.id),active=state.theme===t.id;
+
   return `<div class="theme ${active?"active":""} ${unlocked?"":"lock"}">
    <div class="swatches">${t.sw.map(c=>`<span class="sw" style="background:${c}"></span>`).join("")}</div>
-   <b>${t.name}</b><small>${t.desc}</small>
-   ${unlocked?`<button class="btn ${active?"gold":"secondary"}" onclick="useTheme('${t.id}')">${active?"Active":"Use"}</button>`:`<button class="btn secondary" onclick="buyTheme('${t.id}')">${t.level?"🔒 Level "+t.level:t.cost.toLocaleString()+" XP"}</button>`}
+   <b>${t.name}</b>
+   <small>${t.desc}</small>
+   ${unlocked
+    ? `<button class="btn ${active?"gold":"secondary"}" onclick="useTheme('${t.id}')">${active?"Active":"Use"}</button>`
+    : `<button class="btn secondary" disabled>🔒 Level ${t.level}</button>`
+   }
   </div>`;
  }).join("");
 }
-function buyTheme(id){
- let t=THEMES.find(x=>x.id===id);if(!t||themeUnlocked(id))return;
- if(state.xp<t.cost){toast("🔒 LOCKED",`Need ${t.cost-state.xp} more XP.`);return}
- state.xp-=t.cost;state.theme=id;save();render();toast("🎨 THEME UNLOCKED",`${t.name} is yours.`);
+
+function useTheme(id){
+ if(!themeUnlocked(id))return;
+ state.theme=id;
+ save();
+ applyTheme();
+ renderThemes();
+ toast("🎨 THEME EQUIPPED",THEMES.find(x=>x.id===id).name);
 }
-function useTheme(id){if(!themeUnlocked(id))return;state.theme=id;save();applyTheme();renderThemes();toast("🎨 THEME EQUIPPED",THEMES.find(x=>x.id===id).name)}
+
 function applyTheme(){
  clearInterval(window._themeParticleTimer);clearInterval(window._meteorTimer);
  document.body.classList.remove("neon","sakura","midnight","winter");
